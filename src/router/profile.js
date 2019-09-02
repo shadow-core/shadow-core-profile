@@ -26,13 +26,12 @@ export default function (app) {
       asyncHandler(profileController.getProfileAction.bind(profileController)),
     );
 
-  /*
   app.router
     .route('/profile/change_password')
     .post(
-      authPassportCheck.authenticate,
+      authPassportCheck.authenticate.bind(authPassportCheck),
+      validations.changePassword.validators(),
       profileController.validate.bind(profileController),
       asyncHandler(profileController.changePasswordAction.bind(profileController))
     );
-  */
 }

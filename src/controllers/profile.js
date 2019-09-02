@@ -1,6 +1,8 @@
 import { BasicController } from 'shadow-core-basic';
 import ProfileCore from '../ProfileCore';
 
+const bcrypt = require('bcryptjs');
+
 /**
  * @class ProfileController
  * @classdesc Profile controller class.
@@ -23,11 +25,7 @@ export default class ProfileController extends BasicController {
    * @param res
    */
   async getProfileAction(req, res) {
-    const userId = req.user._id;
-    const user = await this.core.getUser(userId);
-    if (!user) {
-      return res.status(401).json({'success': false, 'code': 401, 'message': 'Unauthorized'});
-    }
+    const user = req.user;
     return res.json({
       'email': user.email,
     });
@@ -41,24 +39,12 @@ export default class ProfileController extends BasicController {
    * @returns {Promise.<void>}
    */
   async changePasswordAction(req, res) {
-    let userId = req.user._id;
-    let user = await this.core.getUser(userId);
-    if (!user) {
-      return res.status(401).json({'success': false, 'code': 401, 'message': 'Unauthorized'});
-    }
+    let user = req.user;
 
-    /*
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return this.returnInvalidErrors(errors.array(), res);
-    }
+    const actionParams = this.getMatchedData(req);
 
-    const _action_params = matchedData(req);
-    */
-
-    //update password and return success
-    user.password_hash = bcrypt.hashSync(_action_params.new_password, 10);
-    user.save();
-    return this.returnSuccess(this.getJsonAnswer(_action_name).getJsonSuccess(), res);
+    user.passwordHash = bcrypt.hashSync(actionParams.newPassword, 10);
+    await user.save();
+    return this.returnSuccess(this.core.getJsonResponse('changePassword', 'success'), res);
   }
 }
