@@ -2,7 +2,7 @@
 import ProfileCore from './ProfileCore';
 import ProfileValidations from './validations';
 import ProfileController from './controllers/profile';
-import ProfileRouter from './router/profile';
+import ProfileRouter from './router/ProfileRouter';
 
 import ProfileTests from './tests';
 
